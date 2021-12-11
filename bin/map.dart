@@ -1,38 +1,27 @@
 import 'rpg_package.dart';
 
-class Map {
+ class Map {
   Room storage;
   Room hallway;
   Room bedroom;
   Room balcony;
   Room bathroom;
   Room kitchen;
-  Room livingRoom;
+  static Room livingRoom;
   Room attic;
-  Room mainDoor;
-  Room storageItem;
-  Room hallwayItem;
-  Room hallwayOption;
-  Room storageOption;
+  static Room entrance;
   //State
-  Room currentRoom;
-  bool isSearching;
-  List<String> options = ['Search room', 'check inventory']; // options for room
-  List<String> actionsStorage = ['[1] Pick up crowbar\n[2] Leave the crowbar where it is'];
+  static Room currentRoom;
   Map() {
-    // hallwayItem = HallwayItem(item: 'crumbled note');
-    storageItem = StorageItem(item: 'crowbar');
-    // hallwayOption = HallwayItemOption(item: 'crumbled note');
-    // storageOption = StorageItemOption(item: 'crowbar');
-    storage = Storage(description: 'Storage',item: 'crowbar');
-    hallway = Hallway(description: 'Hallway');
-    bedroom = Bedroom(description: 'Bedroom');
-    balcony = Balcony(description: 'Balcony');
-    kitchen = Kitchen(description: 'Kitchen');
-    bathroom = Bathroom(description: 'Bathroom');
-    livingRoom = LivingRoom(description: 'Living Room');
+    storage = Storage(description: 'Storage',items: ['crowbar'],actions: 'you find a crowbar lying on a shelf');
+    hallway = Hallway(description: 'Hallway', items: ['brick'],actions: 'there is a brick lying on the floor', mainDoor: 'Main Door', enemy: ['zombie']);
+    bedroom = Bedroom(description: 'Bedroom', items: ['chair leg'],actions: ' and find a leg of a chair lying under the bed, hmm might be useful' );
+    balcony = Balcony(description: 'Balcony', items: ['crumbled note'], actions: 'you find lying on the ground crumbled note with the numbers 3457 written on it');
+    kitchen = Kitchen(description: 'Kitchen', items: ['frying pan'], actions:'and see a frying pan hanging over the cabinets, "this might come in handy"');
+    bathroom = Bathroom(description: 'Bathroom', items: ['lock box'], actions: 'you find after a long search a lock box "Damn its locked I need a 4 digit code to unlock it');
+    livingRoom = LivingRoom(description: 'Living Room',items: ['candlestick'],actions: 'stairs in the corner leading to a shutter');
     attic = Attic(description: 'Attic');
-    mainDoor = MainDoor(description: 'Main door');
+    entrance = Entrance(description: 'Main entrance');
     currentRoom = storage; // current room er ástand leiksins
     storage.addAdjacentRoom(hallway); //búa til nágranna
     hallway.addAdjacentRoom(bedroom);
@@ -41,54 +30,24 @@ class Map {
     bathroom.addAdjacentRoom(kitchen);
     hallway.addAdjacentRoom(kitchen);
     livingRoom.addAdjacentRoom(hallway);
-    livingRoom.addAdjacentRoom(attic);
-    hallway.addAdjacentRoom(mainDoor);
-    // storageOption.addItemList('crowbar');
-    // hallwayOption.addItemList('crumbled note');
-  }
+    hallway.addAdjacentRoom(entrance);
 
-  void updateState(String input) {
-    //þessi method uppfærir current room
+  }
+  void updateState(String input) {  //þessi method uppfærir current room
+    roomActions(input);
+  }
+  void roomActions(String input){
     int userInput = int.parse(input);
-    //go through neighbours
-    if (userInput - 1 < currentRoom.adjacentRooms.length) {
+    if (userInput - 1 < currentRoom.adjacentRooms.length) {   //go through neighbours
       changeCurrentRoom(userInput);
-    } else {
-      //ef ekki í gegnum nágranna þá förum við í actions
-      currentRoom.performAction(
-          userInput - 1 - currentRoom.adjacentRooms.length);
+    } else if(userInput - 1 == currentRoom.adjacentRooms.length) {
+      currentRoom.performAction(userInput - 1 - currentRoom.adjacentRooms.length);   //ef ekki í gegnum nágranna þá förum við í actions
+    }else{
+      checkInventory();
+      /// TODO skoða að taka út brackets á lista fyrir prent
     }
-    // int userActionInput = int.parse(input);
-    // if (userActionInput == '1') {
-    //   storageOptions;
-    // }
   }
-  void performAction(int actionIndex) {
-    //input -1 nágrannalisti.length
-
-    if (actionIndex == 0) {
-      isSearching = true; // til að breyta state-inu á forritinu breytist í false þegar maður velur search room
-      // og sett aftur í false til að komast aftur í main menu
-      print(currentRoom.item);
-      int input = int.parse(stdin.readLineSync());
-      if(input == 1){
-        // inventory.add(storageItem);
-        // print(inventory);
-        print('you add crowbar to your inventory');
-      }
-    } else if (actionIndex == 1) {
-      isSearching = false;
-    }
-    // int userInput = int.parse(stdin.readLineSync());
-    // if (userInput == 1) {
-
-    void setSearch(bool search) {
-      ///TODO updatestate þarf að spyrja fleiri spurninga
-      isSearching = search;
-    }
-
-  }
-  void showState() {
+  void renderGame() {
     // if currentRoom is isSearching false! do something else
     currentRoom.roomDescription(); //Leikurinn byrjar í storage=currentroom
   }
@@ -96,10 +55,7 @@ class Map {
   void changeCurrentRoom(int userInput) {
     currentRoom = currentRoom.adjacentRooms[userInput - 1];
   }
-
-  void itemOptions(int input) {
-    if (input == 1) {
-
-    }
+  void checkInventory() {
+    print('You look through your backpack: ${Player.inventory}');
   }
 }
