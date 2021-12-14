@@ -3,4 +3,22 @@ player functions: checkInventory, showHealth áður en maður tekur action.
 hægt a lesa miða!
 ath byrjar með bakpoka
 
+void roomDescription() {
+    print('You are in room: $description');
+    int option = 1;
+    print('From here you can enter:');
+    for (Room room in adjacentRooms) {
+      print('[$option] ${room.name}');
+      option++;
+    }
+    if (Map.currentRoom == Map.entrance) {
+      print(
+          'You try getting out the main door but it´s barricaded from the outside');
+    } else {
+      for (String action in options) {
+        print('[$option] $action');
+        option++;
+      }
+    }
+  }
 
