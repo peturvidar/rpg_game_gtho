@@ -14,48 +14,50 @@ class Map {
   //State
   static Room currentRoom;
   static Room lastRoom;
-  static Room previousRoom;
 
   Map() {
+    //kort af húsinu
     storage = Storage(
         description: 'storage',
-        items: ['crowbar'],
-        actions: 'you find a crowbar lying on a shelf',  ///TODO actions á að vera actions ath breyta
+        items: ['baseball bat'],
+        searchResult: 'you find a baseball bat lying on a shelf',
+
+        ///TODO actions á að vera actions ath breyta
         enemy: false);
     hallway = Hallway(
         description: 'hallway',
         items: ['brick'],
-        actions: 'there is a brick lying on the floor',
+        searchResult: 'there is a brick lying on the floor',
         mainDoor: 'Main Door',
         enemy: true);
     bedroom = Bedroom(
         description: 'bedroom',
         items: ['chair leg'],
-        actions:
+        searchResult:
             ' and find a leg of a chair lying under the bed, "might be useful"',
         enemy: true);
     balcony = Balcony(
         description: 'balcony',
         items: ['crumbled note "3457"'],
-        actions:
+        searchResult:
             'you find lying on the ground crumbled note with the numbers 3457 written on it',
         enemy: true);
     kitchen = Kitchen(
         description: 'kitchen',
-        items: ['frying pan'],
-        actions:
-            'and see a frying pan hanging over the cabinets, "this might come in handy"',
+        items: ['rolling pin'],
+        searchResult:
+            'and see a rolling pin laying on the kitchen counter, "this might come in handy"',
         enemy: false);
     bathroom = Bathroom(
         description: 'bathroom',
         items: ['key'],
-        actions:
+        searchResult:
             'and you find a hidden safe behind one of the cabinets\n"its locked you´ll need a 4 digit code to unlock it"',
         enemy: false);
     livingRoom = LivingRoom(
         description: 'living Room',
         items: [],
-        actions: 'stairs in the corner leading to a shutter',
+        searchResult: 'stairs in the corner leading to a shutter',
         enemy: false);
     attic = Attic(description: 'attic');
     entrance = Entrance(description: 'main entrance', enemy: false);
@@ -70,62 +72,49 @@ class Map {
     hallway.addAdjacentRoom(entrance);
   }
 
-
-
   void updateState(String input) {
-    //þessi method uppfærir current room
-    int userInput = int.parse(input);
-
-      if (userInput - 1 <= currentRoom.adjacentRooms.length) {
-        //go through neighbours
+    //þetta function uppfærir ástand leiksins
+    try {
+      int userInput = int.parse(input);
+      bool isNeighbourIndex = userInput - 1 < currentRoom.adjacentRooms.length;
+      if (isNeighbourIndex) {
+        //change to neighbour
         changeCurrentRoomByIndex(userInput);
-        // } else if (userInput - 1 >= currentRoom.adjacentRooms.length) {
-      } else if (userInput - 1 < currentRoom.adjacentRooms.length &&
-          userInput - 1 <
-              currentRoom.adjacentRooms.length + currentRoom.actions.length) {
-        currentRoom.performAction(userInput - 1 - currentRoom.adjacentRooms
-            .length); //ef ekki í gegnum nágranna þá förum við í actions
+        //if not to neighbour then to action
       } else {
-        checkInventory();
+        currentRoom
+            .performAction(userInput - 1 - currentRoom.adjacentRooms.length);
       }
+    }catch (e){
+      Room.invalidInput();
+      return;
     }
-
+  }
 
   void renderGame() {
-    // if currentRoom is isSearching false! do something else
-    currentRoom.roomDescriptionPrufa(); //Leikurinn byrjar í storage=currentroom
+    //Leikurinn byrjar í storage=currentroom
+    currentRoom.roomDescription();
   }
 
   void iniateGame() {
+    //byrja leikinn/kynning
     print('Welcome to G.T.H.O');
     print('Please enter your name to start the game');
-    String input = stdin.readLineSync(encoding: Encoding.getByName('utf-8'));
-    print(
-        'Hello $input its seems you have just woken up disoriented in an unknown house, your phone and wallet\n'
-            'seem to be missing, all you carry is a old torn backpack, you think to yourself\n'
-            '"I have to get the hell out of here this place looks creepy as hell I should look around and see if I find something useful,\n you grab the backpack\n'
-            'and get on your feet and start looking around');
+    try {
+      String input = stdin.readLineSync(encoding: Encoding.getByName('utf-8'));
+      print(
+          'Hello $input its seems you have just woken up disoriented in an unknown house, your phone and wallet\n'
+              'are missing, all you carry is a old torn backpack, you think to yourself\n'
+              '"I have to get the hell out of here, this place looks creepy as hell I should look around and see if I find something useful,\n you grab the backpack\n'
+              'and get on your feet and start looking around');
+    }catch (e){
+      Room.invalidInput();
+      return;
+    }
   }
 
   void changeCurrentRoomByIndex(int userInput) {
-    previousRoom = currentRoom;
+    //uppfæra currentRoom
     currentRoom = currentRoom.adjacentRooms[userInput - 1];
-  }
-  void changeCurrentRoom(Room room) {
-    previousRoom = currentRoom;
-    currentRoom = room;
-  }
-  void goToPreviousRoom(){
-    currentRoom = previousRoom;
-  }
-
-  void checkInventory() {
-    if(Player.inventory.isNotEmpty) {
-      print('You look through your backpack: ${Player.inventory}');
-      print('Your health: ${Player.health}');
-    }else{
-      print('Your inventory is empty');
-      print('Your health: ${Player.health}');
-    }
   }
 }

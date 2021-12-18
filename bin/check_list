@@ -1,24 +1,26 @@
-player þarf að hafa: nafn, health, inventory
-player functions: checkInventory, showHealth áður en maður tekur action.
-hægt a lesa miða!
-ath byrjar með bakpoka
-
 void roomDescription() {
-    print('You are in room: $description');
+    //lýsing á herbergi
     int option = 1;
+    if (Map.currentRoom.enemy == false) {
+      //ef óvinur er í herbergi þarf að engage-a hann áður en hægt er að fá frekar valmöguleika
+      engageEnemy(option);
+    }
+    print(
+        'You are in room: $description'); // ef óvinur er til staðar í herberbergi þarf að drepa hann til að komast áfram
     print('From here you can enter:');
     for (Room room in adjacentRooms) {
+      // prentar út hvaða herbergi eru nágrannar og gefur valmöguleika að skipta um herbergi
       print('[$option] ${room.name}');
       option++;
     }
     if (Map.currentRoom == Map.entrance) {
-      print(
-          'You try getting out the main door but it´s barricaded from the outside');
+      //sér möguleiki fyrir entrance
+      entranceDescription();
     } else {
-      for (String action in options) {
+      for (String action in actions) {
+        //prentar út actions fyrir hvert herbergi
         print('[$option] $action');
         option++;
       }
     }
   }
-

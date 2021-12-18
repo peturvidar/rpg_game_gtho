@@ -1,32 +1,29 @@
-
-
 class Player {
   static String name;
   static int health = 100;
   static List<String> inventory = [];
-
- static void loseHealth(){
+  static bool isGameOver = false;
+  static void loseHealth() {
     health = health - 50;
     printHealth();
   }
-  static void printHealth(){
+
+  static void printHealth() {
     print('Your health is ${Player.health}');
   }
-  static bool isDead(){
-   return health <= 0;
-   if(health == 0){
-     return true;
-   }
+
+  static bool isDead() {
+    print('You have sustained too much injury and bleed to death');
+    return health <= 0;
+  }
+
+  static void printInventory() {
+    if (inventory.isNotEmpty) {
+      print('You look through your backpack: $inventory');
+      print('Your health: $health');
+    } else {
+      print('Your inventory is empty');
+      print('Your health: $health');
+    }
   }
 }
-
-
-// class Player {
-//   String name;
-//   int health;
-//   List<String> inventory;
-//
-//   Player({this.name,this.health,this.inventory});
-//
-//
-// }
