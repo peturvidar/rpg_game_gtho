@@ -37,7 +37,10 @@ class Map {
         description: 'balcony',
         items: ['crumbled note "3457"'],
         searchResult:
-            'you find lying on the ground crumbled note with the numbers 3457 written on it',
+            'you start by checking the fence around the balcony but it is to high and also\n'
+                'rigged with barbed wired on top so you are not going to get out this way.\n'
+                'You give up on trying to get out this way and resume searching for something useful\n'
+                'you find lying on the ground crumbled note with the numbers 3457 written on it',
         enemy: true);
     kitchen = Kitchen(
         description: 'kitchen',
@@ -56,7 +59,6 @@ class Map {
         items: [],
         searchResult: 'stairs in the corner leading to a shutter',
         enemy: false);
-    attic = Attic(description: 'attic');
     entrance = Entrance(description: 'main entrance', enemy: false);
     currentRoom = storage; // current room er ástand leiksins
     storage.addAdjacentRoom(hallway); //búa til nágranna

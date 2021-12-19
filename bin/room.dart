@@ -296,11 +296,6 @@ class LivingRoom extends Room {
       : super(description: description, name: 'Living Room');
 }
 
-class Attic extends Room {
-  String description;
-  Attic({this.description}) : super(description: description, name: 'Attic');
-}
-
 class Entrance extends Room {
   bool enemy;
   String description;
