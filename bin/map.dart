@@ -13,7 +13,6 @@ class Map {
 
   //State
   static Room currentRoom;
-  static Room lastRoom;
 
   Map() {
     //kort af húsinu
@@ -21,8 +20,6 @@ class Map {
         description: 'storage',
         items: ['baseball bat'],
         searchResult: 'you find a baseball bat lying on a shelf',
-
-        ///TODO actions á að vera actions ath breyta
         enemy: false);
     hallway = Hallway(
         description: 'hallway',
@@ -92,11 +89,11 @@ class Map {
   }
 
   void renderGame() {
-    //Leikurinn byrjar í storage=currentroom
+    //Leikurinn byrjar í storage = currentroom
     currentRoom.roomDescription();
   }
 
-  void iniateGame() {
+  void initiateGame() {
     //byrja leikinn/kynning
     print('Welcome to G.T.H.O');
     print('Please enter your name to start the game');
@@ -107,6 +104,7 @@ class Map {
               'are missing, all you carry is a old torn backpack, you think to yourself\n'
               '"I have to get the hell out of here, this place looks creepy as hell I should look around and see if I find something useful,\n you grab the backpack\n'
               'and get on your feet and start looking around');
+      Player.name = input;
     }catch (e){
       Room.invalidInput();
       return;

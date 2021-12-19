@@ -1,3 +1,4 @@
+import 'map.dart';
 import 'rpg_package.dart';
 
 class Room {
@@ -15,9 +16,12 @@ class Room {
   Room({this.name, this.description});
   List<Room> adjacentRooms = []; //listi yfir nágranna
 
-  void addInventory(List<String> item) {
-    print('You have added ${removeBrackets(item)} to your backpack');
-    Player.inventory.addAll(item);
+  void printGameFinished() {
+    print(
+        'You use the key to open the shutter and climb up to the attic, you notice a small open\n'
+        'window and crawl out of it and climb down the stairs that lie right beneath it.\n'
+        '"Congratulations ${Player.name} you have managed to escape alive, thank you for playing\n'
+        ' hope to see you again in G.T.H.O 2"');
   }
 
   void openShutterMiniGame() {
@@ -28,20 +32,16 @@ class Room {
     try {
       int input = int.parse(stdin.readLineSync());
       if (input == 1 && Player.inventory.contains('key')) {
-        print(
-            'You use the key to open the shutter and climb up to the attic, you notice a small open\n'
-                'window and crawl out of it and climb down the stair that lie right beneath it.\n'
-                '"Congratulations you have managed to escape alive, see you again in G.T.H.O 2"');
+        printGameFinished();
         Player.isGameOver = true;
       } else {
         print('The shutter has a lock, you need to find a key to open it');
       }
-    } catch (e){
+    } catch (e) {
       invalidInput();
       return;
     }
-    }
-
+  }
 
   void performSearchAction() {
     if (Map.currentRoom.items.isEmpty) {
@@ -58,16 +58,16 @@ class Room {
     isSearching = false;
   }
 
-  void performAction(int actionIndex) {  ///TODO ath varðandi living room fastur í search mode
-    if (Map.currentRoom != Map.livingRoom) {
-      if (actions[actionIndex] == 'Search room') {
-        //search room
+  void performAction(int actionIndex) {
+    if (actions[actionIndex] == 'Search room') {
+      //search room
+      if (Map.currentRoom == Map.livingRoom) {
+        openShutterMiniGame();
+      } else {
         performSearchAction();
-      } else if (actions[actionIndex] == 'check inventory and health') {
-        Player.printInventory();
       }
-    }else {
-      openShutterMiniGame();
+    } else if (actions[actionIndex] == 'check inventory and health') {
+      Player.printInventory();
     }
   }
 
@@ -88,31 +88,33 @@ class Room {
         if (input == 1 && Player.inventory.isNotEmpty) {
           //ef ráðist er á óvin og item er til staðar í inventory
           print(
-              "You engage the zombie and kill him with your ${Player
-                  .inventory[0]} but your ${Player.inventory[0]} breaks");
+              "You engage the zombie and kill him with your ${Player.inventory[0]} but your ${Player.inventory[0]} breaks");
           Player.inventory.removeAt(0); // tekur út 1 item í inventory
           Map.currentRoom.enemy = false;
         } else {
-          print(
-              'You engage the zombie but you don´t have anything to fight him with in your backpack,\n'
-                  ' it´s a hard fight but you manage to kill the zombie, but you are badly wounded \n'
-                  '"I don´t think I can do that again"');
-          Player.loseHealth();
-          Map.currentRoom.enemy = false;
-          if (Player.isDead()) {
+          if (Player.health == 100) {
+            print(
+                'You engage the zombie but you don´t have anything to fight him with in your backpack,\n'
+                ' it´s a hard fight but you manage to kill the zombie, but you are badly wounded \n'
+                '"I don´t think I can do that again"');
+            Player.loseHealth();
+          } else {
+            Player.isDead();
             Player.isGameOver = true;
           }
         }
-      }catch (e){
+        Map.currentRoom.enemy = false;
+      } catch (e) {
         invalidInput();
         engageEnemy(option);
       }
     }
   }
 
-  String removeBrackets(List<String> input) {
-    ///TODO gera fall hérna með for lykkju til að prenta út lista
-    return input.toString().replaceAll('[', '').replaceAll(']', '');
+  static String printElementWithoutBrackets(List<String> input) {
+    for (String string in input) {
+      return string;
+    }
   }
 
   static void invalidInput() {
@@ -147,14 +149,18 @@ class Room {
           option++;
         }
       }
-    }else{
+    } else {
       engageEnemy(option);
-      roomDescription();
+      if (Player.isGameOver == true) {
+        return;
+      } else {
+        roomDescription();
+      }
     }
   }
 
   void pickUpItem() {
-    addInventory(items);
+    Player.addInventory(items);
     items.removeAt(0);
   }
 
@@ -171,7 +177,8 @@ class Room {
     print('Enter code:');
     try {
       int input = int.parse(stdin.readLineSync());
-      if (input == 3457) {// ef rétt input
+      if (input == 3457) {
+        // ef rétt input
         print('"Click", the safe opens and you find a key inside it');
         print('You have added a key to your backpack');
         Player.inventory.add(items[0]);
@@ -179,7 +186,8 @@ class Room {
       } else {
         print('That code does not seem to work');
       }
-    } catch (e) { // ef ekki eru slegnar inn int tölur þá prenta þetta og loopa til baka.
+    } catch (e) {
+      // ef ekki eru slegnar inn int tölur þá prenta þetta og loopa til baka.
       print('You have entered an invalid number, please try again');
       crackSafeMiniGame();
     }
@@ -195,7 +203,7 @@ class Room {
       if (input == 1) {
         crackSafeMiniGame();
       }
-    }catch (e){
+    } catch (e) {
       invalidInput();
       return;
     }
@@ -204,19 +212,18 @@ class Room {
   void interactiveSearch() {
     int option = 1;
     print(
-        'You search the room and $searchResult\n[$option] Pick up ${removeBrackets(items)}');
-    print('[2] Leave the ${removeBrackets(items)}');
-   try {
-     int input = int.parse(stdin.readLineSync());
+        'You search the room and $searchResult\n[$option] Pick up ${printElementWithoutBrackets(items)}');
+    print('[2] Leave the ${printElementWithoutBrackets(items)}');
+    try {
+      int input = int.parse(stdin.readLineSync());
 
-     if (input == 1) {
-       pickUpItem();
-     }
-   }catch (e){
-     invalidInput();
-     return;
-
-   }
+      if (input == 1) {
+        pickUpItem();
+      }
+    } catch (e) {
+      invalidInput();
+      return;
+    }
   }
 }
 

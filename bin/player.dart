@@ -1,8 +1,12 @@
+import 'rpg_package.dart';
+
 class Player {
   static String name;
   static int health = 100;
   static List<String> inventory = [];
   static bool isGameOver = false;
+
+
   static void loseHealth() {
     health = health - 50;
     printHealth();
@@ -16,7 +20,10 @@ class Player {
     print('You have sustained too much injury and bleed to death');
     return health <= 0;
   }
-
+  static void addInventory(List<String> item) {
+    print('You have added ${Room.printElementWithoutBrackets(item)} to your backpack');
+    inventory.addAll(item);
+  }
   static void printInventory() {
     if (inventory.isNotEmpty) {
       print('You look through your backpack: $inventory');
