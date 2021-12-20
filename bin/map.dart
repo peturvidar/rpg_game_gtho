@@ -9,8 +9,7 @@ class Map {
   static Room balcony;
   static Room livingRoom;
   static Room bathroom;
-  static Room entrance;
-
+  static Room mainEntrance;
   //State
   static Room currentRoom;
 
@@ -38,9 +37,9 @@ class Map {
         items: ['crumbled note "3457"'],
         searchResult:
             'you start by checking the fence around the balcony but it is to high and also\n'
-                'rigged with barbed wired on top so you are not going to get out this way.\n'
-                'You give up on trying to get out this way and resume searching for something useful\n'
-                'you find lying on the ground crumbled note with the numbers 3457 written on it',
+            'rigged with barbed wired on top so you are not going to get out this way.\n'
+            'You give up on trying to get out this way and resume searching for something useful\n'
+            'you find lying on the ground crumbled note with the numbers 3457 written on it',
         enemy: true);
     kitchen = Kitchen(
         description: 'kitchen',
@@ -59,7 +58,7 @@ class Map {
         items: [],
         searchResult: 'stairs in the corner leading to a shutter',
         enemy: false);
-    entrance = Entrance(description: 'main entrance', enemy: false);
+    mainEntrance = MainEntrance(description: 'main entrance', enemy: false);
     currentRoom = storage; // current room er ástand leiksins
     storage.addAdjacentRoom(hallway); //búa til nágranna
     hallway.addAdjacentRoom(bedroom);
@@ -68,7 +67,7 @@ class Map {
     bathroom.addAdjacentRoom(kitchen);
     hallway.addAdjacentRoom(kitchen);
     livingRoom.addAdjacentRoom(hallway);
-    hallway.addAdjacentRoom(entrance);
+    hallway.addAdjacentRoom(mainEntrance);
   }
 
   void updateState(String input) {
@@ -84,7 +83,7 @@ class Map {
         currentRoom
             .performAction(userInput - 1 - currentRoom.adjacentRooms.length);
       }
-    }catch (e){
+    } catch (e) {
       Room.invalidInput();
       return;
     }
@@ -103,11 +102,11 @@ class Map {
       String input = stdin.readLineSync(encoding: Encoding.getByName('utf-8'));
       print(
           'Hello $input its seems you have just woken up disoriented in an unknown house, your phone and wallet\n'
-              'are missing, all you carry is a old torn backpack, you think to yourself\n'
-              '"I have to get the hell out of here, this place looks creepy as hell I should look around and see if I find something useful,\n you grab the backpack\n'
-              'and get on your feet and start looking around');
+          'are missing, all you carry is a old torn backpack, you think to yourself\n'
+          '"I have to get the hell out of here, this place looks creepy as hell I should look around and see if I find something useful,\n you grab the backpack\n'
+          'and get on your feet and start looking around');
       Player.name = input;
-    }catch (e){
+    } catch (e) {
       Room.invalidInput();
       return;
     }

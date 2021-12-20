@@ -1,4 +1,3 @@
-import 'map.dart';
 import 'rpg_package.dart';
 
 class Room {
@@ -47,8 +46,7 @@ class Room {
     if (Map.currentRoom.items.isEmpty) {
       print('You search the room and find nothing');
     } else {
-      isSearching =
-          true; // til að breyta state-inu á forritinu breytist í false þegar maður velur search room// og sett aftur í false til að komast aftur í main menu
+      isSearching = true;
       if (Map.currentRoom != Map.bathroom) {
         interactiveSearch();
       } else {
@@ -130,7 +128,7 @@ class Room {
     //lýsing á herbergi
     int option = 1;
     if (Map.currentRoom.enemy == false) {
-      //ef óvinur er í herbergi þarf að engage-a hann áður en hægt er að fá frekar valmöguleika
+      //ef enginn óvinur er í herbergi
       print(
           'You are in room: $description'); // ef óvinur er til staðar í herberbergi þarf að drepa hann til að komast áfram
       print('From here you can enter:');
@@ -139,7 +137,7 @@ class Room {
         print('[$option] ${room.name}');
         option++;
       }
-      if (Map.currentRoom == Map.entrance) {
+      if (Map.currentRoom == Map.mainEntrance) {
         //sér möguleiki fyrir entrance
         entranceDescription();
       } else {
@@ -150,6 +148,7 @@ class Room {
         }
       }
     } else {
+      //ef óvinur er í herbergi þarf að clear-a hann til að komast inní herbergið og fá upp actions
       engageEnemy(option);
       if (Player.isGameOver == true) {
         return;
@@ -296,9 +295,9 @@ class LivingRoom extends Room {
       : super(description: description, name: 'Living Room');
 }
 
-class Entrance extends Room {
+class MainEntrance extends Room {
   bool enemy;
   String description;
-  Entrance({this.description, this.enemy})
+  MainEntrance({this.description, this.enemy})
       : super(description: description, name: 'Main entrance');
 }
